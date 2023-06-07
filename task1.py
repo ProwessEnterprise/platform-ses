@@ -1,10 +1,13 @@
 from email.message import EmailMessage
+from dotenv import load_dotenv
+import os
 import ssl
 import smtplib
-email_sender = 'gottipatisaividhya4280@gmail.com'
-email_password = 'sxrn expn krbu ajkl'
-email_receiver = 'reyyoufazee@gmail.com'
-subject = 'test mail'
+load_dotenv()
+email_sender = os.environ['EMAIL_ADDRESS1']
+email_password = os.environ['EMAIL_PASSWORD1']
+email_receiver = 'gottipatisaividhya4280@gmail.com'
+subject = 'DOTENV mail'
 body = """
 generating a automated mail using python"""
 em = EmailMessage()
