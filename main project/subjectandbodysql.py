@@ -1,7 +1,10 @@
+import pika, sys, os
+import json
 import pymysql.cursors
 from dotenv import load_dotenv
 import os
-
+import traceback
+import logging
 class EmailDatabase1:
     def __init__(self, host, user, password, database):
         self.host = host
@@ -53,7 +56,24 @@ class EmailDatabase1:
             self.connection.close()
             self.cursor = None
             self.connection = None
-def main():
+def receive_email(message):
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+    result= channel.queue_declare(queue='', exclusive=True )
+    queue_name = result.method.queue
+    channel.exchange_declare(exchange='email_exchange', exchange_type='fanout')
+    channel.queue_bind(exchange='email_exchange', queue=queue_name)
+    
+    def callback(ch, method, properties, body):
+        message = json.loads(body.decode())
+        print(" [x] Received %r" % message)
+        send_email(message)
+
+    channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
+
+def send_email(message):
     load_dotenv()
     host_name = os.environ['host_name']
     user_name = os.environ['user_name']
@@ -64,32 +84,15 @@ def main():
     db.connect()
     db.create_table()
 
-    emails_query = "SELECT recipientname,employeeid FROM emails"
-    db.cursor.execute(emails_query)
-    emails_result = db.cursor.fetchall()
-    for row in emails_result:
-        recipientname = row['recipientname']
-        employeeid = row['employeeid']
-    
-    assets_query = "SELECT assetid, assettype, assetmodel, dispatchdate FROM assets"
-    db.cursor.execute(assets_query)
-    assets_result = db.cursor.fetchall()
-    for row in assets_result:
-        assetid = row['assetid']
-        assettype = row['assettype']
-        assetmodel = row['assetmodel']
-        dispatchdate = row['dispatchdate']
+    recipient_name = message['recipient_name']
+    employee_id = message['employee_id']
+    asset_id = message['asset_id']
+    asset_type = message['asset_type']
+    asset_model = message['asset_model']
+    dispatch_date = message['dispatch_date']
 
-    
-    recipient_name = recipientname
-    employee_id = employeeid
-    asset_id =assetid
-    asset_type = assettype
-    asset_model = assetmodel
-    dispatch_date = dispatchdate
-    
     subject = "Asset Tracking | {} | {} | Employee id: {}".format(asset_type, recipient_name, employee_id)
-   
+
     if asset_type.lower() == "laptop":
         body_file_name = "laptopbody.html"
     elif asset_type.lower() == "printer":
@@ -98,19 +101,34 @@ def main():
         body_file_name = "modembody.html" 
     
     with open(body_file_name, "r") as body_file:
-       body = body_file.read().format(recipient_name,asset_id, asset_type,asset_model, asset_id, dispatch_date)
-    
-   
-    db.insert_emailinfo(subject,body)
-    
-    emails = db.get_all_emailinfo()
-    print("ALL EMAILS:")
-    print(emails)
+        body = body_file.read().format(recipient_name, asset_id, asset_type, asset_model, asset_id, dispatch_date)
 
+    try:
+        db.insert_emailinfo(subject, body)
+        print("Email inserted successfully!")
+        logging.info("Email inserted successfully!")
+
+        emails = db.get_all_emailinfo()
+        print("ALL EMAILS:")
+        print(emails)
+    except Exception as e:
+        print("Error occurred while processing email:")
+        print(traceback.format_exc())  
+        logging.exception("Error occurred while processing email:")
+ 
     db.disconnect()
+ 
+     
+def main():
+    try:
+        logging.basicConfig(filename='email.log', level=logging.INFO)
+        receive_email(None)
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
 
 if __name__ == '__main__':
     main()
-    
-    
-
