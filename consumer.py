@@ -88,7 +88,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
     def getAssetInfo(self,user_id):
         query = f"SELECT * FROM asset WHERE id='{user_id}'"
         self.cursor.execute(query)
-        result = self.cursor.fetchone()
+	result = self.cursor.fetchone()
         self._asset_data["asset_type"]    =  result[4]
         self._asset_data["asset_id"]      =  result[2]
         self._asset_data["asset_model"]   =  result[9]
