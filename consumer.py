@@ -37,7 +37,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
         try:
             email_sender = "btsot714369@gmail.com"
             email_password = "btmr dkwn cezp iojd"
-            email_cc = "kotesh.i@prowessenterprise.com"
+            email_cc = "kotesh.i@prowessenterprise.com,murthy.k@prowessenterprise.com"
 
             em = EmailMessage()
             em['From'] = email_sender
