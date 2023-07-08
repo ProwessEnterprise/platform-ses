@@ -84,16 +84,22 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
         self._user_data["name"] = result[3]
         self._user_data["email"] = result[1]
         self._user_data["employee_id"] = result[2]
+
+    def getDispatchInfo(self,asset_id):
+        query = f"SELECT * FROM dispatch WHERE asset_id='{asset_id}'"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        print (result)
+        self._asset_data["dispatch_date"] =  str(result[1])
     
     def getAssetInfo(self,user_id):
         query = f"SELECT * FROM asset WHERE id='{user_id}'"
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         print (result)
-        self._asset_data["asset_type"]    =  result[4]
-        self._asset_data["asset_id"]      =  result[2]
-        self._asset_data["asset_model"]   =  result[9]
-        self._asset_data["dispatch_date"] =  str(result[6])
+        self._asset_data["asset_type"]    =  result[12]
+        self._asset_data["asset_id"]      =  result[10]
+        self._asset_data["asset_model"]   =  result[6]
 
     def onMessageReceive(self,ch, method, properties, body):
         LOGGER.info(f"Message Received - ({body})...")
