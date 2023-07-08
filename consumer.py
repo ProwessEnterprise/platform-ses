@@ -58,11 +58,11 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
         self.subject = "Asset Tracking | {} | {} | Employee id: {}".format(self._asset_data["asset_type"],self._user_data["name"], self._user_data["employee_id"])
 
         if self._asset_data["asset_type"].lower() == "laptop":
-            body_file_name = "laptopbody.html"
+            body_file_name = "./static/laptopbody.html"
         elif self._asset_data["asset_type"].lower() == "printer":
-            body_file_name = "printerbody.html"
+            body_file_name = "./static/printerbody.html"
         else:
-            body_file_name = "modembody.html"
+            body_file_name = "./static/modembody.html"
 
         print (self._user_data,self._asset_data)
         
