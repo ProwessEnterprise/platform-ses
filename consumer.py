@@ -49,7 +49,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
             with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
                 smtp.login(email_sender, email_password)
                 smtp.send_message(em)
-            logging.INFO("Email Sent to %s"%(self._user_data["email"]))
+            logging.info(f'Email Sent to {self._user_data["email"]}')
         except Exception as e:
             print (e)
             logging.exception("Error occurred while processing email:")
@@ -80,26 +80,24 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
         query = f"SELECT * FROM user_details WHERE id='{user_id}'"
         self.cursor.execute(query)
         result = self.cursor.fetchone()
-        print (result)
-        self._user_data["name"] = result[3]
-        self._user_data["email"] = result[1]
-        self._user_data["employee_id"] = result[2]
+        self._user_data["name"] = result["name"]
+        self._user_data["email"] = result["email"]
+        self._user_data["employee_id"] = result["employee_id"]
 
     def getDispatchInfo(self,asset_id):
         query = f"SELECT * FROM dispatch WHERE asset_id='{asset_id}'"
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         print (result)
-        self._asset_data["dispatch_date"] =  str(result[1])
+        self._asset_data["dispatch_date"] =  str(result["date_of_dispatch"])
     
     def getAssetInfo(self,user_id):
         query = f"SELECT * FROM asset WHERE id='{user_id}'"
         self.cursor.execute(query)
         result = self.cursor.fetchone()
-        print (result)
-        self._asset_data["asset_type"]    =  result[12]
-        self._asset_data["asset_id"]      =  result[10]
-        self._asset_data["asset_model"]   =  result[6]
+        self._asset_data["asset_type"]  =  result["asset_type"]
+        self._asset_data["asset_id"]    =  result["asset_id_number"]
+        self._asset_data["asset_model"] =  result["model"]
 
     def onMessageReceive(self,ch, method, properties, body):
         LOGGER.info(f"Message Received - ({body})...")

@@ -1,5 +1,6 @@
 import psycopg2
 import logging 
+import psycopg2.extras
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
@@ -25,8 +26,8 @@ class PostgresSQL:
                                   port="5432",
                                   database=self.database
                                 )     
-        self.cursor = self.psqlConnection.cursor()
-      
+        self.cursor = self.psqlConnection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
     def disconnect(self):
         if self.psqlConnection and self.cursor:
             self.cursor.close()
