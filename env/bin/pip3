@@ -1,4 +1,4 @@
-#!/home/ubuntu/asset-management/python-interns-work/env/bin/python3
+#!/Users/cl-dev/Documents/prowess-projects/asset-management/python-interns-work/env/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

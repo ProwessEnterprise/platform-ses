@@ -49,7 +49,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
             with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
                 smtp.login(email_sender, email_password)
                 smtp.send_message(em)
-            logging.info(f'Email Sent to {self._user_data["email"]}')
+            logging.info("Email Sent to {}".format(self._user_data["email"]))
         except Exception as e:
             print (e)
             logging.exception("Error occurred while processing email:")
@@ -77,22 +77,23 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
             )
 
     def getUserInfo(self,user_id):
-        query = f"SELECT * FROM user_details WHERE id='{user_id}'"
+        query = "SELECT * FROM employee WHERE id='{}'".format(user_id)
         self.cursor.execute(query)
         result = self.cursor.fetchone()
+        print (result)
         self._user_data["name"] = result["name"]
         self._user_data["email"] = result["email"]
         self._user_data["employee_id"] = result["employee_id"]
 
     def getDispatchInfo(self,asset_id):
-        query = f"SELECT * FROM dispatch WHERE asset_id='{asset_id}'"
+        query = "SELECT * FROM dispatch WHERE asset_id='{}'".format(asset_id)
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         print (result)
         self._asset_data["dispatch_date"] =  str(result["date_of_dispatch"])
     
     def getAssetInfo(self,user_id):
-        query = f"SELECT * FROM asset WHERE id='{user_id}'"
+        query = "SELECT * FROM asset WHERE id='{}'".format(user_id)
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         self._asset_data["asset_type"]  =  result["asset_type"]
@@ -100,7 +101,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
         self._asset_data["asset_model"] =  result["model"]
 
     def onMessageReceive(self,ch, method, properties, body):
-        LOGGER.info(f"Message Received - ({body})...")
+        LOGGER.info("Message Received - {}...".format(body))
         message = json.loads(body)
         asset_id = message['asset_id']
         user_id = message["user_id"]
@@ -111,7 +112,7 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
 
     def consumerDeclare(self,queue_name):
         """Called when a message is received. Log message and ack it."""
-        LOGGER.info(f"Trying to declare queue({queue_name})...") 
+        LOGGER.info("Trying to declare queue({queue_name})...".format(queue_name=queue_name)) 
         self._channel = self.connection.channel()
         self._queue = queue_name
         self_result = self._channel.queue_bind(queue='test',exchange="email_exchange")
@@ -125,10 +126,10 @@ class MessageConsumer(BasicPikaClient,PostgresSQL):
                     )
         
         try:
-            LOGGER.info(f" [*] Waiting for messages. To exit press CTRL+C") 
+            LOGGER.info(" [*] Waiting for messages. To exit press CTRL+C") 
             self._channel.start_consuming()
         except KeyboardInterrupt:
-            LOGGER.info(f" Stopped consuming") 
+            LOGGER.info(" Stopped consuming") 
             self._channel.stop_consuming()
 
 if __name__ == "__main__":
@@ -138,7 +139,7 @@ if __name__ == "__main__":
     database_password = "astM@1234"
     database = "prowess_asset_manage"
     asset_table = "asset"
-    user_table = "user_details"
+    user_table = "employee"
 
     basic_message_receiver = MessageConsumer(
         "b-dd0c2f43-8d03-40c8-8272-ea7a1c07a93d",
