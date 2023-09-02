@@ -1,5 +1,6 @@
+""" Postgres Client """
+import logging
 import psycopg2
-import logging 
 import psycopg2.extras
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -9,28 +10,30 @@ LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 class PostgresSQL:
+    """ Postgres Class """
     def __init__(self, host, user, password, database):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
-        self.psqlConnection = None
+        self.psql_connection = None
         self.cursor = None
 
     def connect(self):
-
+        """ Connect to a Postgres database """
          # Connect to an existing database
-        self.psqlConnection = psycopg2.connect(user=self.user,
+        self.psql_connection = psycopg2.connect(user=self.user,
                                   password=self.password,
                                   host=self.host,
                                   port="5432",
                                   database=self.database
-                                )     
-        self.cursor = self.psqlConnection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+                                )   
+        self.cursor = self.psql_connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     def disconnect(self):
-        if self.psqlConnection and self.cursor:
+        """ Disconnect from a Postgres database """
+        if self.psql_connection and self.cursor:
             self.cursor.close()
-            self.psqlConnection.close()
+            self.psql_connection.close()
             self.cursor = None
-            self.psqlConnection = None
+            self.psql_connection = None
