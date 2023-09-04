@@ -24,8 +24,7 @@ class ConnectionInfo:
     rabbitmq_broker_id: str
     rabbitmq_user: str
     rabbitmq_password: str
-    region: str
-
+    
 
 @dataclass
 class DBConnectionInfo:
@@ -45,7 +44,6 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                                  rabbit_mq_info.rabbitmq_broker_id,
                                  rabbit_mq_info.rabbitmq_user,
                                  rabbit_mq_info.rabbitmq_password,
-                                 rabbit_mq_info.region
                                  )
         PostgresSQL.__init__(self, db_info.host_name,
                              db_info.user_name,
@@ -179,11 +177,10 @@ if __name__ == "__main__":
     DATABASE = dotenv.get_key('.env', "DB_NAME")
     TABLE = dotenv.get_key('.env', "TABLE_NAME")
 
-    RABBITMQ_BROKER_ID = dotenv.get_key(".env", "RABBITMQ_HOST")
-    RABBITMQ_USER = dotenv.get_key(".env", "RABBITMQ_USER")
-    RABBITMQ_PASSWORD = dotenv.get_key(".env", "RABBITMQ_PASSWORD")
-    REGION = dotenv.get_key(".env", "REGION")
-
+    RABBITMQ_BROKER_ID = dotenv.get_key(".env", "RABBITMQ_EC2_HOST")
+    RABBITMQ_USER = dotenv.get_key(".env", "RABBITMQ_EC2_USER")
+    RABBITMQ_PASSWORD = dotenv.get_key(".env", "RABBITMQ_EC2_PASSWORD")
+    
     EMAIL_ID = dotenv.get_key(".env", "EMAIL_ID")
     EMAIL_PASSWORD = dotenv.get_key(".env", "EMAIL_PASSWORD")
     EMAIL_CC = dotenv.get_key(".env", "EMAIL_CC")
@@ -194,8 +191,7 @@ if __name__ == "__main__":
         ConnectionInfo(
             RABBITMQ_BROKER_ID,
             RABBITMQ_USER,
-            RABBITMQ_PASSWORD,
-            REGION
+            RABBITMQ_PASSWORD
         ),
         DBConnectionInfo(
             HOSTNAME,

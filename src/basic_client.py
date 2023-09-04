@@ -11,17 +11,13 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 class BasicPikaClient():
     """ Basic Pika client """
-    def __init__(self, rabbitmq_broker_id, rabbitmq_user, rabbitmq_password, region):
-        # SSL Context for TLS configuration of Amazon MQ for RabbitMQ
-        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        ssl_context.set_ciphers('ECDHE+AESGCM:!ECDSA')
-        url = f"amqps://{rabbitmq_user}:{rabbitmq_password}@{rabbitmq_broker_id}.mq.{region}.amazonaws.com:5671"
-        print (url)
-        LOGGER.info("Rabbit Mq connecting to %s", url)
-        parameters = pika.URLParameters(url)
-        parameters.ssl_options = pika.SSLOptions(context=ssl_context)
+    def __init__(self, rabbitmq_broker_id, rabbitmq_user, rabbitmq_password):
+        credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
+        LOGGER.info("Rabbit Mq connecting to localhost")
+        parameters = pika.ConnectionParameters(host=rabbitmq_broker_id,
+                                               port=5672, credentials=credentials)
         self.connection = pika.BlockingConnection(parameters)
-        LOGGER.info("Rabbit Mq connected to %s", url)
+        LOGGER.info("Rabbit Mq connected to localhost")
 
     def close(self):
         """ close connection """
