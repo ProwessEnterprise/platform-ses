@@ -3,7 +3,6 @@ import json
 import logging
 from email.message import EmailMessage
 import smtplib
-import ssl
 from dataclasses import dataclass
 
 import dotenv
@@ -95,16 +94,16 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
         with open(body_file_name, "r") as body_file:
             self.body = body_file.read().format(
                 self._vendor_data["name"],
-                self._indent_request_data["asset_id"],
+                # self._indent_request_data["asset_id"],
                 self._indent_request_data["asset_type"],
                 self._indent_request_data["model"],
                 self._indent_request_data["make"],
                 self._indent_request_data["os"],
                 self._indent_request_data["processor"],
                 self._indent_request_data["ram"],
-                self._indent_request_data["screen_size"]             
-            )
-    
+                self._indent_request_data["screen_size"]
+        )
+
     def get_vendor_info(self, vendor_id):
         """ get vendor info """
         query = f"SELECT * FROM vendor WHERE id='{vendor_id}'"
