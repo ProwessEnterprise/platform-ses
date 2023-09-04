@@ -202,6 +202,6 @@ if __name__ == "__main__":
     )
 
     basic_message_receiver.connect()
-    basic_message_receiver.consumer_declare("test")
+    basic_message_receiver.consumer_declare("indent_request")
     basic_message_receiver.start_consuming()
     basic_message_receiver.disconnect()
