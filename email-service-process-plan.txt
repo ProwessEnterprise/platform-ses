@@ -1,0 +1,10 @@
+Requirements 
+
+    1. Signup-OTP Email ---------------------------------> DONE
+    2. Welcom Email     ---------------------------------> PENDING
+    3. Asset Allocation Info Email ----------------------> NEED REFACTOR
+    4. Purchase request Email ---------------------------> NEED REFACTOR
+    5. password-update Email ----------------------------> DONE
+    6. Asset Allocation Request reject email (optional) -> PENDING
+    7. Asset reviewed by Manager Email (optional) -------> PENDING
+    8. Asset Rental request EMail -----------------------> PENDING
