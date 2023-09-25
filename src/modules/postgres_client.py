@@ -37,3 +37,33 @@ class PostgresSQL:
             self.psql_connection.close()
             self.cursor = None
             self.psql_connection = None
+
+    def insert_record(self, table_name, columns, values):
+        """ Insert record into a table """
+        try:
+            self.connect()
+            insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({values})"
+            self.cursor.execute(insert_query)
+            self.psql_connection.commit()
+        except (Exception, psycopg2.Error) as error:
+            LOGGER.error(f"Error while inserting record into table {table_name}: {error}".format(table_name=table_name,error=error))
+        finally:
+            self.disconnect()
+    def update_record(self, table_name, set_values, where_condition):
+        """ Update record in a table """
+        try:
+            self.connect()
+            update_query = f"UPDATE {table_name} SET {set_values} WHERE {where_condition}"
+            self.cursor.execute(update_query)
+            self.psql_connection.commit()
+        except (Exception, psycopg2.Error) as error:
+            LOGGER.error(f"Error while updating record in table {table_name}: {error}".format(table_name=table_name,error=error))
+        finally:
+            self.disconnect()
+
+
+
+psql = PostgresSQL("localhost", "postgres", "postgres", "postgres")
+psql.connect()
+psql.insert_record("test", "name, age", "'test', 10")
+psql.update_record("test", "age=20", "name='test'")
