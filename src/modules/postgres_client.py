@@ -60,10 +60,3 @@ class PostgresSQL:
             LOGGER.error(f"Error while updating record in table {table_name}: {error}".format(table_name=table_name,error=error))
         finally:
             self.disconnect()
-
-
-
-psql = PostgresSQL("localhost", "postgres", "postgres", "postgres")
-psql.connect()
-psql.insert_record("test", "name, age", "'test', 10")
-psql.update_record("test", "age=20", "name='test'")
