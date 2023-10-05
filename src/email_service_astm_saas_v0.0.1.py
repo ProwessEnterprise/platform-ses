@@ -78,6 +78,15 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name)
         return {"subject": subject, "body": body}
+    
+    def prepare_dispatch_arpprove_email(self, account_name ) -> dict:
+        """ dispatch approve email """
+        subject = "Dispatch Approved | Asset Management"
+        body_file_name = "./static/onboard/dispatch-approve.html"
+        print (account_name)
+        with open(body_file_name, "r", encoding="UTF-8") as body_file:
+            body = body_file.read().format(account_name)
+        return {"subject": subject, "body": body}
 
     def get_signup_user(self,signup_user_email,condition) -> dict:
         """ get asset info """
@@ -147,6 +156,16 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
             email_data = self.prepare_register_complete_email(platform_user_data["name"])
             self.send_email(ADMIN_EMAIL_ID,
                             platform_user_data["email"],
+                            email_data["subject"],
+                            email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                            )
+        elif message["type"] == "dispatch-approve":
+            account_user_data = self.get_account_user_info(message['data']['email'])
+            print (account_user_data)
+            email_data = self.prepare_dispatch_arpprove_email(account_user_data["account_name"])
+            self.send_email(ADMIN_EMAIL_ID,
+                            account_user_data["email"],
                             email_data["subject"],
                             email_data["body"],
                             ADMIN_EMAIL_PASSWORD
