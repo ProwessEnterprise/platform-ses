@@ -1,10 +1,9 @@
-Requirements 
-
-    1. Signup-OTP Email ---------------------------------> DONE
-    2. Welcom Email     ---------------------------------> PENDING
-    3. Asset Allocation Info Email ----------------------> NEED REFACTOR
-    4. Purchase request Email ---------------------------> NEED REFACTOR
-    5. password-update Email ----------------------------> DONE
-    6. Asset Allocation Request reject email (optional) -> PENDING
-    7. Asset reviewed by Manager Email (optional) -------> PENDING
-    8. Asset Rental request EMail -----------------------> PENDING
+Platform Signup OTP Email                   -> DONE
+Platform Signup Confirmation Email           -> DONE
+Asset Dispatch Info Email                   -> DONE
+Request Rejected by Asset Admin Email       -> DONE
+Request Rejected by Manager Email           -> DONE
+Purchase Request Rejected Email ?           -> NOT STARTED
+Purchase Request Email to vendor            -> NOT STARTED
+Forgot password Email update Email          -> NOT STARTED
+Get an Email Alert when an Asset comes out of that GeoFence -> NOT STARTED
