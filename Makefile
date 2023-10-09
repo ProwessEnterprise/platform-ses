@@ -9,6 +9,10 @@ run:
 	python src/email_service_astm_saas_v0.0.1.py
 
 # Path: Makefile
+run-background:
+	nohup python src/email_service_astm_saas_v0.0.1.py &
+
+# Path: Makefile
 clean:
 	rm -rf .venv
 	rm -rf __pycache__
