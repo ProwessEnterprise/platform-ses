@@ -16,6 +16,20 @@ LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
 LOGGER = logging.getLogger(__name__)
 
+RABBITMQ_BROKER_ID = None
+RABBITMQ_USER = None
+RABBITMQ_PASSWORD = None
+QUEUE_NAME = None
+
+EMAIL_EXCHANGE = None
+EMAIL_PORT = None
+
+ADMIN_EMAIL_ID = None
+ADMIN_EMAIL_PASSWORD = None
+PLATFORM_USER_TABLE = "platform_user"
+ACCOUNT_TABLE = "account_user"
+
+
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 
@@ -201,25 +215,21 @@ if __name__ == "__main__":
     USERNAME = dotenv.get_key('.env', "DB_USER")
     PASSWORD = dotenv.get_key('.env', "DB_PASSWORD")
     DATABASE = dotenv.get_key('.env', "DB_NAME")
-    TABLE = dotenv.get_key('.env', "TABLE_NAME")
+    # TABLE = dotenv.get_key('.env', "TABLE_NAME")
     PLATFORM_USER_TABLE = "platform_user"
     ACCOUNT_TABLE = "account_user"
 
-    RABBITMQ_BROKER_ID = dotenv.get_key(".env", "RABBITMQ_EC2_HOST")
-    RABBITMQ_USER = dotenv.get_key(".env", "RABBITMQ_EC2_USER")
-    RABBITMQ_PASSWORD = dotenv.get_key(".env", "RABBITMQ_EC2_PASSWORD")
+    RABBITMQ_BROKER_ID = dotenv.get_key(".env", "RABBITMQ_HOST")
+    RABBITMQ_USER = dotenv.get_key(".env", "RABBITMQ_USER")
+    RABBITMQ_PASSWORD = dotenv.get_key(".env", "RABBITMQ_PASSWORD")
     QUEUE_NAME = dotenv.get_key(".env", "QUEUE_NAME")
 
-    EMAIL_ID = dotenv.get_key(".env", "EMAIL_ID")
-    EMAIL_PASSWORD = dotenv.get_key(".env", "EMAIL_PASSWORD")
-    EMAIL_CC = dotenv.get_key(".env", "EMAIL_CC")
     EMAIL_EXCHANGE = dotenv.get_key(".env", "EMAIL_EXCHANGE")
     EMAIL_PORT = dotenv.get_key(".env", "EMAIL_PORT")
 
     ADMIN_EMAIL_ID = dotenv.get_key(".env", "ADMIN_EMAIL_ID")
     ADMIN_EMAIL_PASSWORD = dotenv.get_key(".env", "ADMIN_EMAIL_PASSWORD")
-    ADMIN_EMAIL_CC = dotenv.get_key(".env", "ADMIN_EMAIL_CC")
-
+    
     basic_message_receiver = MessageConsumer(
         ConnectionInfo(
             RABBITMQ_BROKER_ID,
