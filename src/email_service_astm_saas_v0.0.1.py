@@ -7,7 +7,7 @@ import smtplib
 from smtplib import SMTPException
 import dotenv
 from utils.otp_generator import generate_alphanumeric_otp
-from utils.data_classes import ConnectionInfo, DBConnectionInfo, SignupOtpInfo, RegisterCompleteInfo
+from utils.data_classes import ConnectionInfo, DBConnectionInfo, SignupOtpInfo
 
 from modules.basic_client import BasicPikaClient
 from modules.postgres_client import PostgresSQL
