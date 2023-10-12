@@ -75,7 +75,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
     def prepare_sigup_otp_email(self, signup_otp_info: SignupOtpInfo) -> dict:
         """ prepare signup otp email """
-        subject = "Signup | Authentication | Asset Management"
+        subject = "Signup | Authentication | SaaS Platform"
         body_file_name = "./static/onboard/signup-otp.html"
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(
@@ -86,7 +86,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
     def prepare_register_complete_email(self, account_name ) -> dict:
         """ prepare signup otp email """
-        subject = "Registration Completed Successfully | Asset Management"
+        subject = "Registration Completed Successfully | SaaS Platform"
         body_file_name = "./static/onboard/signup-complete.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
@@ -95,8 +95,26 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     
     def prepare_dispatch_arpprove_email(self, account_name ) -> dict:
         """ dispatch approve email """
-        subject = "Dispatch Approved | Asset Management"
+        subject = "Dispatch Approved | SaaS Platform"
         body_file_name = "./static/onboard/dispatch-approve.html"
+        print (account_name)
+        with open(body_file_name, "r", encoding="UTF-8") as body_file:
+            body = body_file.read().format(account_name)
+        return {"subject": subject, "body": body}
+    
+    def prepare_forget_password_email(self, account_name,otp ) -> dict:
+        """ prepare signup otp email """
+        subject = "Forget Password | SaaS Platform"
+        body_file_name = "./static/password-update/forgot-password.html"
+        print (account_name)
+        with open(body_file_name, "r", encoding="UTF-8") as body_file:
+            body = body_file.read().format(account_name,otp)
+        return {"subject": subject, "body": body}
+    
+    def prepare_update_password_email(self, account_name ) -> dict:
+        """ prepare signup otp email """
+        subject = "Update Password | SaaS Platform"
+        body_file_name = "./static/password-update/password-update.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name)
@@ -126,17 +144,28 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
             LOGGER.info("No accounts found")
             return None
         
-        data = {"admin_email": None,"account_name": None,"asset_admin_email": None}
+        data = {"email": None,"account_name": None,"asset_admin_email": None}
         print (result)
         for row in result:
             if row["role"] == "ADMIN":
-                data["admin_email"] = row["email"]
+                data["email"] = row["email"]
                 data["account_name"] =  row["name"]
             elif row["role"] == "ASSET_ADMIN":
                 data["asset_admin_email"] = row["email"]
             else:
                 pass
         return data
+    
+    def get_account_user_info_by_email(self, account_user_email) -> dict:
+        """ get asset info """
+        time.sleep(2)
+        query = f"SELECT * FROM {ACCOUNT_TABLE} WHERE email='{account_user_email}'"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result is None:
+            LOGGER.info("No accounts found")
+            return None
+        return {"email": result["email"],"account_name": result["name"],"asset_admin_email": None}
 
 
     def on_message_recieve(self, c_h, method, properties, body):
@@ -175,9 +204,30 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                             ADMIN_EMAIL_PASSWORD
                             )
         elif message["type"] == "dispatch-approve":
-            account_user_data = self.get_account_user_info(message['data']['email'])
+            account_user_data = self.get_account_user_info_by_email(message['data']['email'])
             print (account_user_data)
             email_data = self.prepare_dispatch_arpprove_email(account_user_data["account_name"])
+            self.send_email(ADMIN_EMAIL_ID,
+                            account_user_data["email"],
+                            email_data["subject"],
+                            email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                            )
+        elif message["type"] == "forgot-password":
+            account_user_data = self.get_account_user_info_by_email(message['data']['email'])
+            otp = message['data']['otp']
+            email_data = self.prepare_forget_password_email(account_user_data["account_name"],otp)
+            print (account_user_data)
+            self.send_email(ADMIN_EMAIL_ID,
+                            account_user_data["email"],
+                            email_data["subject"],
+                            email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                            )
+        elif message["type"] == "update-password":
+            account_user_data = self.get_account_user_info_by_email(message['data']['email'])
+            print (account_user_data)
+            email_data = self.prepare_update_password_email(account_user_data["account_name"])
             self.send_email(ADMIN_EMAIL_ID,
                             account_user_data["email"],
                             email_data["subject"],
