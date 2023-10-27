@@ -93,13 +93,14 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
             body = body_file.read().format(account_name)
         return {"subject": subject, "body": body}
     
-    def prepare_dispatch_arpprove_email(self, account_name ) -> dict:
+    def prepare_dispatch_arpprove_email(self, account_name,otp) -> dict:
         """ dispatch approve email """
         subject = "Dispatch Approved | SaaS Platform"
-        body_file_name = "./static/onboard/dispatch-approve.html"
+        body_file_name = "./static/dispatch/dispatch-approve.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
-            body = body_file.read().format(account_name)
+            body = body_file.read().format(account_name,otp)
+
         return {"subject": subject, "body": body}
     
     def prepare_forget_password_email(self, account_name,otp ) -> dict:
@@ -166,7 +167,17 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
             LOGGER.info("No accounts found")
             return None
         return {"email": result["email"],"account_name": result["name"],"asset_admin_email": None}
-
+    
+    def get_account_user_info_by_id(self, account_user_id) -> dict:
+        """ get asset info """
+        time.sleep(2)
+        query = f"SELECT * FROM {ACCOUNT_TABLE} WHERE id='{account_user_id}'"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result is None:
+            LOGGER.info("No accounts found")
+            return None
+        return {"email": result["email"],"account_name": result["name"],"asset_admin_email": None}
 
     def on_message_recieve(self, c_h, method, properties, body):
         """Called when a message is received. Log message and ack it."""
@@ -204,15 +215,21 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                             ADMIN_EMAIL_PASSWORD
                             )
         elif message["type"] == "dispatch-approve":
-            account_user_data = self.get_account_user_info_by_email(message['data']['email'])
+            account_user_data = self.get_account_user_info_by_id(message['data']['user-id'])
             print (account_user_data)
-            email_data = self.prepare_dispatch_arpprove_email(account_user_data["account_name"])
+            otp = generate_alphanumeric_otp()
+            email_data = self.prepare_dispatch_arpprove_email(account_user_data["account_name"],otp)
             self.send_email(ADMIN_EMAIL_ID,
                             account_user_data["email"],
                             email_data["subject"],
                             email_data["body"],
                             ADMIN_EMAIL_PASSWORD
                             )
+            query = f"UPDATE asset_allocate_request SET otp='{otp}' WHERE id='{message['data']['request-id']}'"
+            print (query)
+            self.cursor.execute(query=query)
+            self.psql_connection.commit()
+
         elif message["type"] == "forgot-password":
             account_user_data = self.get_account_user_info_by_email(message['data']['email'])
             otp = message['data']['otp']
@@ -232,6 +249,23 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                             account_user_data["email"],
                             email_data["subject"],
                             email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                            )
+        elif message["type"] == "manager-reject":
+            account_user_data = self.get_account_user_info_by_email(message['data']['email'])
+            print (account_user_data)
+            email_data = self.prepare_update_password_email(account_user_data["account_name"])
+            self.send_email(ADMIN_EMAIL_ID,
+                            account_user_data["email"],
+                            email_data["subject"],
+                            email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                        )
+        elif message["type"] == "geofence-alert":
+            self.send_email(ADMIN_EMAIL_ID,
+                            "rajeev.b@prowessenterprise.com",
+                            "Geofence Alert",
+                            f"User {message['name']} is outside the geofence",
                             ADMIN_EMAIL_PASSWORD
                             )
 
