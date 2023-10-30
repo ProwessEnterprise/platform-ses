@@ -26,6 +26,10 @@ up-pytest-infra:
 down:
 	docker-compose down --remove-orphans
 
+prune:
+	docker system prune -f
+	
+
 
 lint:
 	flake8 --exclude=.tox,*.egg,venv,.venv,build,data --ignore=W291,E303,E501 --select=E,W,F  .

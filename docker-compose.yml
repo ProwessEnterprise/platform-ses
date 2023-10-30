@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  # postgres:
+  #   image: postgres:latest
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres@123
+  #     POSTGRES_DB: platform_db
+  #     POSTGRES_HOST_AUTH_METHOD: trust
+  #   volumes:
+  #     - ./postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - 5433:5432  # Map container port 5432 to host port 5432
+  #   networks:
+  #     - simple-email-service-net
+
+
+  # pg-admin:
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_USER: admin
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin@123
+  #   volumes:
+  #     - ./pgadmin-data:/var/lib/pgadmin
+  #   ports:
+  #     - 5050:80
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - simple-email-service-net
+
+  rabbit-mq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - simple-email-service-net
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin@123
+      RABBITMQ_VHOST: /
+
+
+  device_gateway_service:
+    image: simple-email-service-dkr-img
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      # args:
+      #   - PRIVATE_TOKEN
+    depends_on:
+      - rabbit-mq
+    environment:
+      - POSTGRES_HOST=postgres  # Adjust the hostname for PostgreSQL
+      - POSTGRES_PASSWORD=postgres@123  # Replace with your PostgreSQL password
+      - POSTGRES_USER=postgres  # Replace with your PostgreSQL username
+      - POSTGRES_DB=platform_db  # Replace with your PostgreSQL database
+      - POSTGRES_PORT=5432  # Replace with your PostgreSQL port
+    networks:
+      - simple-email-service-net
+    volumes:
+      - ./app:/home/appuser/code/app
+
+networks:
+  simple-email-service-net:
+    driver: bridge

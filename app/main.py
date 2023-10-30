@@ -6,11 +6,10 @@ from email.message import EmailMessage
 import smtplib
 from smtplib import SMTPException
 import dotenv
-from utils.otp_generator import generate_alphanumeric_otp
 from utils.data_classes import ConnectionInfo, DBConnectionInfo, SignupOtpInfo
-
-from app.rabbitmq.rabbitmq_client import BasicPikaClient
-from app.postgres.postgres_client import PostgresSQL
+from utils.otp_generator import generate_alphanumeric_otp
+from rabbitmq.rabbitmq_client import BasicPikaClient
+from postgres.postgres_client import PostgresSQL
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
