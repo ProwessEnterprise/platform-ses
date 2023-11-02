@@ -12,10 +12,10 @@ build-docker:
 	docker compose build
 
 up-docker:
-	docker compose up -d --force-recreate --renew-anon-volumes
+	docker compose up -d --force-recreate --renew-anon-volumes --remove-orphans
 
 up-local:
-	python3 src/main.py -c ./configs/development.yaml
+	python3 app/main.py -c ./configs/development.yaml
 
 up-docker-debug:
 	docker compose -f ./docker-compose.debug.yml up -d

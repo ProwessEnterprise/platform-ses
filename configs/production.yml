@@ -8,7 +8,7 @@ service:
 
 database:
   db_type: DbType.POSTGRES
-  postgresdb_host: "localhost"
+  postgresdb_host: "postgres"
   postgresdb_username: "postgres"
 logging:
   version: 1
@@ -36,18 +36,7 @@ logging:
         - console
         - file
       propagate: no
-    # tornado.access:
-    #   level: DEBUG
-    #   handlers:
-    #     - file
-    # tornado.application:
-    #   level: DEBUG
-    #   handlers:
-    #     - file
-    # tornado.general:
-    #   level: DEBUG
-    #   handlers:
-    #     - file
+
   root:
     level: WARNING
     handlers:

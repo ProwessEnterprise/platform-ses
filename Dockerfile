@@ -22,7 +22,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt 
 
 FROM ubuntu:20.04 as runner-image
-RUN apt-get update && apt-get install --no-install-recommends -y python3.8 python3.8-venv && \
+RUN apt-get update && apt-get install --no-install-recommends -y python3.8 python3.8-venv libpq-dev && \
     apt-get clean && rm -Rf /var/lib/apt/lists/*
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder

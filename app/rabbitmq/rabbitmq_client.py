@@ -13,9 +13,9 @@ class BasicPikaClient():
     """ Basic Pika client """
     def __init__(self, rabbitmq_broker_id, rabbitmq_user, rabbitmq_password):
         credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
-        LOGGER.info("Rabbit Mq connecting to localhost")
+        LOGGER.info(f"Rabbit Mq connecting to {rabbitmq_broker_id}")
         parameters = pika.ConnectionParameters(host=rabbitmq_broker_id,
-                                               port=5672, credentials=credentials)
+                                               port=5672, credentials=credentials,virtual_host='/')
         self.connection = pika.BlockingConnection(parameters)
         LOGGER.info("Rabbit Mq connected to localhost")
 
@@ -25,4 +25,6 @@ class BasicPikaClient():
         self.connection.close()
         LOGGER.info("Rabbit Mq connection closed")
     
-    
+
+# basic = BasicPikaClient('localhost', 'admin', 'admin@123')
+

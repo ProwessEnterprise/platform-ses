@@ -293,25 +293,26 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
 
 if __name__ == "__main__":
-
-    HOSTNAME = dotenv.get_key(".env", "DB_HOST")
-    USERNAME = dotenv.get_key('.env', "DB_USER")
-    PASSWORD = dotenv.get_key('.env', "DB_PASSWORD")
-    DATABASE = dotenv.get_key('.env', "DB_NAME")
+    HOSTNAME = 'postgres'
+    USERNAME = 'postgres'
+    PASSWORD = 'postgres@123'
+    DATABASE = 'platform_db'
     # TABLE = dotenv.get_key('.env', "TABLE_NAME")
     PLATFORM_USER_TABLE = "platform_user"
     ACCOUNT_TABLE = "account_user"
 
-    RABBITMQ_BROKER_ID = dotenv.get_key(".env", "RABBITMQ_HOST")
-    RABBITMQ_USER = dotenv.get_key(".env", "RABBITMQ_USER")
-    RABBITMQ_PASSWORD = dotenv.get_key(".env", "RABBITMQ_PASSWORD")
-    QUEUE_NAME = dotenv.get_key(".env", "QUEUE_NAME")
+    RABBITMQ_BROKER_ID = ''
+    RABBITMQ_USER = 'admin'
+    RABBITMQ_PASSWORD = 'admin@123'
+    QUEUE_NAME = 'simple_email_queue'
+    EXCHANGE = 'simple_email_exchange'
 
-    EMAIL_EXCHANGE = dotenv.get_key(".env", "EMAIL_EXCHANGE")
-    EMAIL_PORT = dotenv.get_key(".env", "EMAIL_PORT")
 
-    ADMIN_EMAIL_ID = dotenv.get_key(".env", "ADMIN_EMAIL_ID")
-    ADMIN_EMAIL_PASSWORD = dotenv.get_key(".env", "ADMIN_EMAIL_PASSWORD")
+    EMAIL_EXCHANGE = 'smtp.office365.com'
+    EMAIL_PORT = 587
+
+    ADMIN_EMAIL_ID = 'rajeev.b@prowessenterprise.com'
+    ADMIN_EMAIL_PASSWORD = 'make6a@9049'
     
     basic_message_receiver = MessageConsumer(
         ConnectionInfo(
