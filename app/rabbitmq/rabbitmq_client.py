@@ -21,10 +21,5 @@ class BasicPikaClient():
 
     def close(self):
         """ close connection """
-        # self.channel.close()
         self.connection.close()
         LOGGER.info("Rabbit Mq connection closed")
-    
-
-# basic = BasicPikaClient('localhost', 'admin', 'admin@123')
-

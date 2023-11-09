@@ -5,7 +5,6 @@ import logging
 from email.message import EmailMessage
 import smtplib
 from smtplib import SMTPException
-import dotenv
 from utils.data_classes import ConnectionInfo, DBConnectionInfo, SignupOtpInfo
 from utils.otp_generator import generate_alphanumeric_otp
 from rabbitmq.rabbitmq_client import BasicPikaClient
@@ -268,14 +267,19 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                             ADMIN_EMAIL_PASSWORD
                             )
 
-    def consumer_declare(self, queue_name):
+    def consumer_declare(self, queue_name,exchange_name):
         """Called when a message is received. Log message and ack it."""
         LOGGER.info(f"Trying to declare queue({queue_name})...".format(
             queue_name=queue_name))
+        
+        
         self._channel = self.connection.channel()
         self._queue = queue_name
+        self._channel.queue_declare(queue=queue_name, durable=True)
+        self._channel.exchange_declare(exchange=exchange_name, exchange_type="direct")
+
         self._channel.queue_bind(
-            queue=QUEUE_NAME, exchange="email_exchange")
+            queue=queue_name, exchange=exchange_name)
 
     def start_consuming(self):
         """ some text"""
@@ -293,15 +297,15 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
 
 if __name__ == "__main__":
-    HOSTNAME = 'postgres'
+    HOSTNAME = 'host.docker.internal'
     USERNAME = 'postgres'
-    PASSWORD = 'postgres@123'
-    DATABASE = 'platform_db'
+    PASSWORD = 'astM@1234'
+    DATABASE = 'platform_db_2_w4'
     # TABLE = dotenv.get_key('.env', "TABLE_NAME")
     PLATFORM_USER_TABLE = "platform_user"
     ACCOUNT_TABLE = "account_user"
 
-    RABBITMQ_BROKER_ID = ''
+    RABBITMQ_BROKER_ID = 'rabbitmq'
     RABBITMQ_USER = 'admin'
     RABBITMQ_PASSWORD = 'admin@123'
     QUEUE_NAME = 'simple_email_queue'
@@ -329,6 +333,6 @@ if __name__ == "__main__":
     )
 
     basic_message_receiver.connect()
-    basic_message_receiver.consumer_declare(QUEUE_NAME)
+    basic_message_receiver.consumer_declare(QUEUE_NAME,EXCHANGE)
     basic_message_receiver.start_consuming()
     basic_message_receiver.disconnect()
