@@ -297,7 +297,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
 
 if __name__ == "__main__":
-    HOSTNAME = 'host.docker.internal'
+    HOSTNAME = 'postgres'
     USERNAME = 'postgres'
     PASSWORD = 'astM@1234'
     DATABASE = 'platform_db_2_w4'
