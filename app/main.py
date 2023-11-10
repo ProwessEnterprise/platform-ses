@@ -74,7 +74,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     def prepare_sigup_otp_email(self, signup_otp_info: SignupOtpInfo) -> dict:
         """ prepare signup otp email """
         subject = "Signup | Authentication | SaaS Platform"
-        body_file_name = "./static/onboard/signup-otp.html"
+        body_file_name = "./static/templates/onboard/signup-otp.html"
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(
                 signup_otp_info.signup_user,
@@ -85,7 +85,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     def prepare_register_complete_email(self, account_name ) -> dict:
         """ prepare signup otp email """
         subject = "Registration Completed Successfully | SaaS Platform"
-        body_file_name = "./static/onboard/signup-complete.html"
+        body_file_name = "./static/templates/onboard/signup-complete.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name)
@@ -94,7 +94,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     def prepare_dispatch_arpprove_email(self, account_name,otp) -> dict:
         """ dispatch approve email """
         subject = "Dispatch Approved | SaaS Platform"
-        body_file_name = "./static/dispatch/dispatch-approve.html"
+        body_file_name = "./static/templates/dispatch/dispatch-approve.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name,otp)
@@ -104,7 +104,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     def prepare_forget_password_email(self, account_name,otp ) -> dict:
         """ prepare signup otp email """
         subject = "Forget Password | SaaS Platform"
-        body_file_name = "./static/password-update/forgot-password.html"
+        body_file_name = "./static/templates/password-update/forgot-password.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name,otp)
@@ -113,7 +113,7 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
     def prepare_update_password_email(self, account_name ) -> dict:
         """ prepare signup otp email """
         subject = "Update Password | SaaS Platform"
-        body_file_name = "./static/password-update/password-update.html"
+        body_file_name = "./static/templates/password-update/password-update.html"
         print (account_name)
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name)
