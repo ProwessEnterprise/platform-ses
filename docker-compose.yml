@@ -5,7 +5,7 @@ services:
     image: rabbitmq:3-management
     build:
       context: .
-      dockerfile: ./rabbitmq/Dockerfile
+      dockerfile: ./Docker/rabbitmq/Dockerfile
     container_name: rabbitmq
     hostname: rabbitmq
     restart: always
@@ -27,15 +27,15 @@ services:
     container_name: platform-ses
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Docker/ubuntu/Dockerfile
     depends_on:
       - rabbitmq
     environment:
-      - POSTGRES_HOST=postgres  # Adjust the hostname for PostgreSQL
-      - POSTGRES_PASSWORD=postgres@123  # Replace with your PostgreSQL password
-      - POSTGRES_USER=postgres  # Replace with your PostgreSQL username
-      - POSTGRES_DB=platform_db  # Replace with your PostgreSQL database
-      - POSTGRES_PORT=5432  # Replace with your PostgreSQL port
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PASSWORD=postgres@123
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=platform_db
+      - POSTGRES_PORT=5432
     networks:
       - platform-0.0.1-net
 
