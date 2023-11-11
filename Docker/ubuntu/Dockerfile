@@ -16,6 +16,7 @@ ENV PATH="/home/appuser/venv/bin:$PATH"
 
 # install requirements
 COPY requirements.txt .
+COPY static ./static
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install wheel
 RUN pip3 install --upgrade pip
