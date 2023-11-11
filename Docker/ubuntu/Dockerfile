@@ -16,7 +16,6 @@ ENV PATH="/home/appuser/venv/bin:$PATH"
 
 # install requirements
 COPY requirements.txt .
-COPY static ./static
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install wheel
 RUN pip3 install --upgrade pip
@@ -36,6 +35,7 @@ RUN mkdir /home/appuser/code
 WORKDIR /home/appuser/code
 COPY ./app ./app
 COPY ./configs ./configs
+COPY static ./static
 
 RUN pwd && chown -R appuser ./
 
