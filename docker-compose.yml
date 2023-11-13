@@ -2,7 +2,6 @@ version: '3'
 
 services:
   rabbitmq:
-    image: rabbitmq:3-management
     build:
       context: .
       dockerfile: ./Docker/rabbitmq/Dockerfile

@@ -1,5 +1,5 @@
 # Use the official RabbitMQ image as the base image
-FROM rabbitmq:3.12.1-management
+FROM rabbitmq:3-management
 
 # Copy a custom configuration file into the container
 COPY /configs/rabbitmq.conf /etc/rabbitmq/rabbitmq.conf
