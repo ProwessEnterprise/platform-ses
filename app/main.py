@@ -297,10 +297,10 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
 
 if __name__ == "__main__":
-    HOSTNAME = 'postgres'
+    HOSTNAME = 'host.docker.internal'
     USERNAME = 'postgres'
-    PASSWORD = 'astM@1234'
-    DATABASE = 'platform_db_2_w4'
+    PASSWORD = 'postgres@123'
+    DATABASE = 'platform_db_dev'
     # TABLE = dotenv.get_key('.env', "TABLE_NAME")
     PLATFORM_USER_TABLE = "platform_user"
     ACCOUNT_TABLE = "account_user"
