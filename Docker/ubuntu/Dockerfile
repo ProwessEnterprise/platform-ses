@@ -11,8 +11,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3.8 pytho
 RUN python3.8 -m venv /home/appuser/venv
 ENV PATH="/home/appuser/venv/bin:$PATH"
 
-# ARG PRIVATE_TOKEN
-# ENV PRIVATE_TOKEN=${PRIVATE_TOKEN}
 
 # install requirements
 COPY requirements.txt .
@@ -41,7 +39,6 @@ RUN pwd && chown -R appuser ./
 
 USER appuser
 
-# EXPOSE 8888
 
 # make sure all messages always reach console
 # Turns off buffering for easier container logging
