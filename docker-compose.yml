@@ -22,8 +22,8 @@ services:
       RABBMITMQ_EXCHANGE: simple_email_exchange
       RABBITMQ_QUEUE: simple_email_queue
 
-  simple_email_service:
-    image: simple-email-service-dkr-img
+  platform-ses-service:
+    image: platform-ses-service-dkr-img
     container_name: platform-ses
     build:
       context: .
@@ -31,10 +31,10 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=localhost
       - POSTGRES_PASSWORD=postgres@123
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=platform_db
+      - POSTGRES_DB=platform_db_dev
       - POSTGRES_PORT=5432
     networks:
       - platform-0.0.1-net
