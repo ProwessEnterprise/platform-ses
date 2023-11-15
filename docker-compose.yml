@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: ./Docker/rabbitmq/Dockerfile
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - platform-0.0.1-net
+    environment:
+      RABBIT_CONFIG_FILE: /etc/rabbitmq/rabbitmq.conf
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin@123
+      RABBITMQ_VHOST: /
+      RABBMITMQ_EXCHANGE: simple_email_exchange
+      RABBITMQ_QUEUE: simple_email_queue
+
+  platform-ses-service:
+    image: platform-ses-service-dkr-img
+    container_name: platform-ses
+    build:
+      context: .
+      dockerfile: ./Docker/ubuntu/Dockerfile
+    depends_on:
+      - rabbitmq
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PASSWORD=postgres@123
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=platform_db_dev
+      - POSTGRES_PORT=5432
+    networks:
+      - platform-0.0.1-net
+
+networks:
+  platform-0.0.1-net:
+    name: platform-0.0.1-net
+    driver: bridge
