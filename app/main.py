@@ -26,6 +26,8 @@ ADMIN_EMAIL_ID = None
 ADMIN_EMAIL_PASSWORD = None
 PLATFORM_USER_TABLE = "platform_user"
 ACCOUNT_TABLE = "account_user"
+JOB_SCHEDULE_TABLE = "job_schedule"
+CUSTOMER_TABLE = "customer"
 
 
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
@@ -33,7 +35,6 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 class MessageConsumer(BasicPikaClient, PostgresSQL):
     """ MessageConsumer class """
-
     def __init__(self, rabbit_mq_info: ConnectionInfo, db_info: DBConnectionInfo):
 
         BasicPikaClient.__init__(self,
@@ -118,6 +119,39 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
         with open(body_file_name, "r", encoding="UTF-8") as body_file:
             body = body_file.read().format(account_name)
         return {"subject": subject, "body": body}
+    
+    
+    def prepare_customer_tracking_link(self, customer_data,job_schedule_data ) -> dict:
+        """ prepare customer tracking link """
+        subject = f"SaaS Platform | Customer Tracking Link | {job_schedule_data['job_schedule_name']}"
+        body_file_name = "./static/templates/customer/customer-tracking-link.html"
+        with open(body_file_name, "r", encoding="UTF-8") as body_file:
+            body = body_file.read().format(customer_data["name"],
+                                           job_schedule_data["job_schedule_id"],
+                                           job_schedule_data["job_schedule_name"])
+        return {"subject": subject, "body": body}
+    
+    def get_customer_data(self, customer_id) -> dict:
+        """ get customer data """
+        query = f"SELECT * FROM {CUSTOMER_TABLE} WHERE id='{customer_id}'"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result is None:
+            LOGGER.info("No customer found")
+            return None
+        return {"name": result["name"], "email": result["email"]}
+    
+    def get_job_schedule_data(self, job_schedule_id) -> dict:
+        """ get job schedule data """
+        query = f"SELECT * FROM {JOB_SCHEDULE_TABLE} WHERE id='{job_schedule_id}'"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result is None:
+            LOGGER.info("No job schedule found")
+            return None
+        return {"job_schedule_id": result["id"], "job_schedule_name": result["name"]}
+
+
 
     def get_signup_user(self,signup_user_email,condition) -> dict:
         """ get asset info """
@@ -266,6 +300,18 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
                             f"User {message['name']} is outside the geofence",
                             ADMIN_EMAIL_PASSWORD
                             )
+        elif message["type"] == "customer-tracking-link":
+            customer_data = self.get_customer_data(message["data"]["customer_id"])
+            job_schedule_data = self.get_job_schedule_data(message["data"]["job_schedule_id"])
+            print (customer_data,job_schedule_data)
+            email_data = self.prepare_customer_tracking_link(customer_data,job_schedule_data)
+            self.send_email(ADMIN_EMAIL_ID,
+                            customer_data["email"],
+                            email_data["subject"],
+                            email_data["body"],
+                            ADMIN_EMAIL_PASSWORD
+                            )
+
 
     def consumer_declare(self, queue_name,exchange_name):
         """Called when a message is received. Log message and ack it."""
@@ -297,15 +343,15 @@ class MessageConsumer(BasicPikaClient, PostgresSQL):
 
 
 if __name__ == "__main__":
-    HOSTNAME = '3.95.218.177'
+    HOSTNAME = 'localhost'
     USERNAME = 'postgres'
     PASSWORD = 'postgres@123'
-    DATABASE = 'platform_db_dev'
+    DATABASE = 'platform_db_2_w4'
     # TABLE = dotenv.get_key('.env', "TABLE_NAME")
     PLATFORM_USER_TABLE = "platform_user"
     ACCOUNT_TABLE = "account_user"
 
-    RABBITMQ_BROKER_ID = 'rabbitmq'
+    RABBITMQ_BROKER_ID = 'localhost'
     RABBITMQ_USER = 'admin'
     RABBITMQ_PASSWORD = 'admin@123'
     QUEUE_NAME = 'simple_email_queue'
